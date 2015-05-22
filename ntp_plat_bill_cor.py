@@ -24,9 +24,13 @@ def marge(plat):
 def parseStopWord():
     json_data=open('stopword.json')
     data = json.load(json_data)
-    # pprint(data)
     json_data.close()
     return data
+
+def extendWord(plat_terms):
+    plat_all_words = list()
+    return plat_all_words
+
 def removeOneTerm(array):
     array_return = []
     for term in array:
@@ -48,9 +52,11 @@ if __name__ == "__main__":
         for bill in bills_list:
             bill_dict = {}
             
+            #刪除stopword            
             plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
             bill_term_ckip_all = list(set(bill["description_term"]).difference(set(stopword)))
 
+            #刪除一個字的
             plat_terms = removeOneTerm(plat_terms)
             bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
 
@@ -60,7 +66,6 @@ if __name__ == "__main__":
                 cor_value = len(interArr)/len(plat_terms)
                 bill_dict["bill_id"] = bill["_id"]
                 bill_dict["cor_value"] = cor_value
-            # bill_dict["match_term"] = interArr
             bill_arr.append(bill_dict)
             all_count = all_count+cor_value
         if len(bill_arr) != 0:
