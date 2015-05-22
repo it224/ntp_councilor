@@ -21,6 +21,7 @@ def marge(plat):
     result_arr.extend(plat["bill_nonu_term"])
     result_arr.extend(plat["bill_verb_term"])
     return result_arr
+    
 def parseStopWord():
     json_data=open('stopword.json')
     data = json.load(json_data)
