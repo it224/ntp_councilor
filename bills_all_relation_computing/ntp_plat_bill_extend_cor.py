@@ -50,7 +50,6 @@ def removeOneTerm(array):
 
 if __name__ == "__main__":
     stopword = parseStopWord()
-    bills_list = list(collection_bills.find())
     plat_list = collection_cr_plat.find()
     for plat in plat_list:
         save_dict ={}
@@ -59,6 +58,7 @@ if __name__ == "__main__":
         save_dict["name"]=plat["cr_name"]
         bill_arr = []
         all_count = 0
+        bills_list = list(collection_bills.find({"$or":[{"proposed_id" : plat["cr_id"]}, { "petitioned_id" : plat["cr_id"]}]}))
         for bill in bills_list:
             bill_dict = {}
             

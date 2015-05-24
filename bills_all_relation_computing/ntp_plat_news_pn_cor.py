@@ -11,9 +11,12 @@ import json
 import math
 '''
 platform 中 news 正負面的比例
-每一篇的正負面都與新聞政見的關聯度相成
-後相加
+每一篇的正負面都與新聞政見的關聯度相乘
+正負面的程度每個全部都有做正規化
+正規化的方式是找Upper bound 也就是正面的len取log
+求出來的分數 (value + U)/2U
 
+後相加在做正規化
 結果為 plat 有議員的 news 的正負面* news的相關度
 '''
 
@@ -61,8 +64,6 @@ if __name__ == "__main__":
         print len(news_list)
         for news in news_list:
             news_cor_value = news["cor_value"]
-            print "news cor_value"
-            print news["cor_value"]
             news = news["news"]
             news_dict = {}
 
@@ -79,14 +80,17 @@ if __name__ == "__main__":
             print nso_negative
             #算比例
             so = math.log(pso_positive/nso_negative)
-            so = so *news_cor_value
-            print so
+            upper = math.log(pso_positive)
+            so_normalize = (so + upper)/2*upper
+            so_normalize = so_normalize *news_cor_value
+            
+            print so_normalize
             print ""
             
             news_dict["news"] = news
-            news_dict["np_cor_value"] = so
+            news_dict["np_cor_value"] = so_normalize
             news_arr.append(news_dict)
-            all_count = all_count+so
+            all_count = all_count+so_normalize
                     
         if len(news_arr) != 0:
             ac = all_count/len(news_arr)
