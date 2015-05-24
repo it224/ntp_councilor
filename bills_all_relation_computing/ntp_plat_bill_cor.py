@@ -24,10 +24,6 @@ def parseStopWord():
     json_data.close()
     return data
 
-def extendWord(plat_terms):
-    plat_all_words = list()
-    return plat_all_words
-
 def removeOneTerm(array):
     array_return = []
     for term in array:

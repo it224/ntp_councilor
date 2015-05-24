@@ -9,14 +9,15 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import json
 '''
-news 與 platform 的分數 但是擴張詞彙
+news 與 platform 的分數 但是是擴張
 '''
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 collection_news = db["ntp_news_url_list_ckip"]
+collection_same_word = db['same_word']
 collection_cr_plat = db['ntp_platform']
-collection_plat_news = db['ntp_news_plat_cor']
+collection_plat_news = db['ntp_platform_news_cor']
 
 def parseStopWord():
     json_data=open('stopword.json')
@@ -28,6 +29,22 @@ def extendWord(plat_terms):
     plat_all_words = list()
     return plat_all_words
 
+def extendWord(terms):
+    plat_all_words = list()
+    for term in terms:
+        term_search_results = list(collection_same_word.find({"word": term}))
+        if(len(term_search_results)>0):
+            for term_s_r in term_search_results[0]["sameIds"]:
+                if term_s_r[1] not in plat_all_words:
+                    plat_all_words.append(term_s_r[1])
+                else:
+                    pass
+        else:
+            pass
+    #結束array的擴張
+    print "end extend"
+    return plat_all_words
+
 def removeOneTerm(array):
     array_return = []
     for term in array:
@@ -37,7 +54,6 @@ def removeOneTerm(array):
 
 if __name__ == "__main__":
     stopword = parseStopWord()
-    news_list = list(collection_news.find())
     plat_list = collection_cr_plat.find()
     for plat in plat_list:
         save_dict ={}
@@ -46,6 +62,14 @@ if __name__ == "__main__":
         save_dict["name"]=plat["cr_name"]
         news_arr = []
         all_count = 0
+        news_list = list(collection_news.find({"cr_id":plat["cr_id"]}))
+
+        print plat["cr_name"].encode('utf-8')
+        print "的新聞"
+        print "news_list"
+        print len(news_list)
+        print ""
+        
         for news in news_list:
             news_dict = {}
             
@@ -53,7 +77,15 @@ if __name__ == "__main__":
             plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
             news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
 
-            #刪除一個字的
+            #刪除一個字的(第一次)
+            plat_terms = removeOneTerm(plat_terms)
+            news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+
+            #擴張詞彙
+            plat_terms = extendWord(plat_terms)
+            bill_term_ckip_all = extendWord(bill_term_ckip_all)
+
+            #刪除一個字的(第二次)
             plat_terms = removeOneTerm(plat_terms)
             news_term_ckip_all = removeOneTerm(news_term_ckip_all)
 
@@ -71,7 +103,8 @@ if __name__ == "__main__":
             ac = 0
         save_dict["accuracy"] = ac
         save_dict["news_list"] = news_arr
-        print save_dict
+        # print save_dict
         collection_plat_news.save(save_dict)
+        break
     print "end all"
     exit(0)
