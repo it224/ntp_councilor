@@ -27,7 +27,7 @@ def parseToMongo():
         for news in cr_ntp_news_list:
             newsId = str(news["_id"])
             try:
-                data = urllib2.urlopen("file:///Users/man27382210/Desktop/self_manage/paper_g0v/ntp_news_html/"+newsId+".html").read()
+                data = urllib2.urlopen("./html/"+newsId+".html").read()
                 soup = BeautifulSoup(data)
                 story = soup.find('td',{"class":"story"})
                 story = re.sub('<[^<]+?>', '', story.text)
