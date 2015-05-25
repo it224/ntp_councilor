@@ -11,7 +11,8 @@ import json
 import math
 '''
 platform 中 bills 的參與個數
-先找有相關的分數
+相關分數不是0就+1
+最後做一次正規化    
 '''
 
 client = MongoClient('mongodb://localhost:27017/')
