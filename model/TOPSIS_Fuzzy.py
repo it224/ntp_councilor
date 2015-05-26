@@ -120,17 +120,19 @@ def computeDistanceAnd(attributes, bestSolution, worestSolution):
         dic["jbs_x_normalize"] = jbs[i]["x_nomailze"]
         dic["jbs_v"] = jbs[i]["v"]
 
-        pbc_dis_b_dura = ((1/3)*((pbc[i]["v"][0] - pbc_bw[0])**2 + (pbc[i]["v"][1] - pbc_bw[1])**2 + (pbc[i]["v"][2] - pbc_bw[2])**2))**0.5 #一個 attr與最佳的距離
-        pnc_dis_b_dura = ((1/3)*((pnc[i]["v"][0] - pnc_bw[0])**2 + (pnc[i]["v"][1] - pnc_bw[1])**2 + (pnc[i]["v"][2] - pnc_bw[2])**2))**0.5
-        npn_dis_b_dura = ((1/3)*((npn[i]["v"][0] - npn_bw[0])**2 + (npn[i]["v"][1] - npn_bw[1])**2 + (npn[i]["v"][2] - npn_bw[2])**2))**0.5
-        jbs_dis_b_dura = ((1/3)*((jbs[i]["v"][0] - jbs_bw[0])**2 + (jbs[i]["v"][1] - jbs_bw[1])**2 + (jbs[i]["v"][2] - jbs_bw[2])**2))**0.5
+        pbc_dis_b_dura = ((1/3)*((pbc[i]["v"][0] - pbc_bw[0])**2 + (pbc[i]["v"][1] - pbc_bw[1])**2 + (pbc[i]["v"][2] - pbc_bw[2])**2)) #一個 attr與最佳的距離
+        pnc_dis_b_dura = ((1/3)*((pnc[i]["v"][0] - pnc_bw[0])**2 + (pnc[i]["v"][1] - pnc_bw[1])**2 + (pnc[i]["v"][2] - pnc_bw[2])**2))
+        npn_dis_b_dura = ((1/3)*((npn[i]["v"][0] - npn_bw[0])**2 + (npn[i]["v"][1] - npn_bw[1])**2 + (npn[i]["v"][2] - npn_bw[2])**2))
+        jbs_dis_b_dura = ((1/3)*((jbs[i]["v"][0] - jbs_bw[0])**2 + (jbs[i]["v"][1] - jbs_bw[1])**2 + (jbs[i]["v"][2] - jbs_bw[2])**2))
         plat_bdis = pbc_dis_b_dura + pnc_dis_b_dura + npn_dis_b_dura + jbs_dis_b_dura
+        plat_bdis = plat_bdis**0.5
 
-        pbc_dis_w_dura = ((1/3)*((pbc[i]["v"][0] - pbc_ww[0])**2 + (pbc[i]["v"][1] - pbc_ww[1])**2 + (pbc[i]["v"][2] - pbc_ww[2])**2))**0.5 #一個 attr與最佳的距離
-        pnc_dis_w_dura = ((1/3)*((pnc[i]["v"][0] - pnc_ww[0])**2 + (pnc[i]["v"][1] - pnc_ww[1])**2 + (pnc[i]["v"][2] - pnc_ww[2])**2))**0.5
-        npn_dis_w_dura = ((1/3)*((npn[i]["v"][0] - npn_ww[0])**2 + (npn[i]["v"][1] - npn_ww[1])**2 + (npn[i]["v"][2] - npn_ww[2])**2))**0.5
-        jbs_dis_w_dura = ((1/3)*((jbs[i]["v"][0] - jbs_ww[0])**2 + (jbs[i]["v"][1] - jbs_ww[1])**2 + (jbs[i]["v"][2] - jbs_ww[2])**2))**0.5
+        pbc_dis_w_dura = ((1/3)*((pbc[i]["v"][0] - pbc_ww[0])**2 + (pbc[i]["v"][1] - pbc_ww[1])**2 + (pbc[i]["v"][2] - pbc_ww[2])**2)) #一個 attr與最佳的距離
+        pnc_dis_w_dura = ((1/3)*((pnc[i]["v"][0] - pnc_ww[0])**2 + (pnc[i]["v"][1] - pnc_ww[1])**2 + (pnc[i]["v"][2] - pnc_ww[2])**2))
+        npn_dis_w_dura = ((1/3)*((npn[i]["v"][0] - npn_ww[0])**2 + (npn[i]["v"][1] - npn_ww[1])**2 + (npn[i]["v"][2] - npn_ww[2])**2))
+        jbs_dis_w_dura = ((1/3)*((jbs[i]["v"][0] - jbs_ww[0])**2 + (jbs[i]["v"][1] - jbs_ww[1])**2 + (jbs[i]["v"][2] - jbs_ww[2])**2))
         plat_wdis = pbc_dis_w_dura + pnc_dis_w_dura + npn_dis_w_dura + jbs_dis_w_dura
+        plat_wdis = plat_wdis**0.5
 
         plat_c = plat_wdis/(plat_wdis+plat_bdis)
 
