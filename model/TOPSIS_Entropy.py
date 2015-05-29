@@ -51,7 +51,7 @@ def findWeight(attributes_decisions):
     d_count = 0
     for j in range(0, len(d_all), 1):
         d_count = d_count + d_all[j]
-
+    
     w_all = []
     for j in range(0, len(d_all), 1):
         w_all.append(d_all[j]/d_count)
@@ -94,8 +94,6 @@ def computeDistanceAnd(attributes, bestSolution, worestSolution):
     pnc = attributes[1][0]
     npn = attributes[2][0]
     jbs = attributes[3][0]
-
-
 
     pbc_bw = bestSolution[0]
     pnc_bw = bestSolution[1]
@@ -145,10 +143,10 @@ def computeDistanceAnd(attributes, bestSolution, worestSolution):
         dic["plat_bdis"] = plat_bdis
         dic["plat_wdis"] = plat_wdis
         dic["plat_c"] = plat_c
-        # print "plat number i "+ str(i)
-        # print dic
-        # ntp_platform_TOPSIS.save(dic)
-        # print ""
+        print "plat number i "+ str(i)
+        print dic
+        ntp_platform_TOPSIS.save(dic)
+        print ""
         
 
 
