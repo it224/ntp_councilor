@@ -16,7 +16,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 collection_bills = db["ntp_bills"]
 collection_cr_plat = db['ntp_platform']
-collection_same_word = db['same_word']
+collection_same_word = db['same_word_my_country']
 collection_plat_bill = db['ntp_platform_bill_extend_cor']
     
 def parseStopWord():
@@ -25,20 +25,12 @@ def parseStopWord():
     json_data.close()
     return data
 
-def extendWord(terms):
-    plat_all_words = list()
-    for term in terms:
-        term_search_results = list(collection_same_word.find({"word": term}))
-        if(len(term_search_results)>0):
-            for term_s_r in term_search_results[0]["sameIds"]:
-                if term_s_r[1] not in plat_all_words:
-                    plat_all_words.append(term_s_r[1])
-                else:
-                    pass
-        else:
-            pass
-    #結束array的擴張
-    print "end extend"
+def extendWord(plat_terms):
+    plat_all_words = plat_terms
+    for term in plat_terms:
+        termFind = collection_same_word.find({"word":term})
+        if termFind.count() > 0:
+            plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
     return plat_all_words
 
 def removeOneTerm(array):

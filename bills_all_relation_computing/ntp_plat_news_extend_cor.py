@@ -15,7 +15,7 @@ news 與 platform 的分數 但是是擴張
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 collection_news = db["ntp_news_url_list_ckip"]
-collection_same_word = db['same_word']
+collection_same_word = db['same_word_my_country']
 collection_cr_plat = db['ntp_platform']
 collection_plat_news = db['ntp_platform_news_cor']
 
@@ -26,7 +26,11 @@ def parseStopWord():
     return data
 
 def extendWord(plat_terms):
-    plat_all_words = list()
+    plat_all_words = plat_terms
+    for term in plat_terms:
+        termFind = collection_same_word.find({"word":term})
+        if termFind.count() > 0:
+            plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
     return plat_all_words
 
 def extendWord(terms):

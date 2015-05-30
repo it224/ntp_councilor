@@ -48,6 +48,14 @@ def get_cosine(vec1, vec2):
     else:
         return float(numerator) / denominator
 
+def get_tamimoto(vec1, vec2):
+    interArr = list(set(vec1).intersection(set(vec2)))
+    same_list = list(set(vec1) | set(vec1))
+    if len(interArr) is 0:
+        return 0.0
+    else:
+        return len(interArr)/len(same_list)
+
 for plat in plats:
     v1_extend = extendWord(removeOneTerm(plat["platforms_term"]))
     dic = {"_id":plat["_id"], "extend_word":v1_extend}
