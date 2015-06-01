@@ -24,7 +24,7 @@ collection_plat_news_cor      = db['ntp_platform_news_cor']
 collection_plat_bill_join_cor = db['ntp_platform_bill_join_cor']
 collection_plat_news_pn_cor   = db['ntp_platform_news_pn_cor']
 
-collection_plat_pairwise_sort   = db['ntp_platform_pairwise_sort']
+collection_plat_pairwise_sort   = db['ntp_platform_PAIRWISE_sort']
 
 
 

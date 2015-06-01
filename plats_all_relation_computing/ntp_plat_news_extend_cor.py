@@ -17,7 +17,7 @@ db = client['ntp_councilor']
 collection_news = db["ntp_news_url_list_ckip"]
 collection_same_word = db['same_word_my_country']
 collection_cr_plat = db['ntp_platform']
-collection_plat_news = db['ntp_platform_news_cor']
+collection_plat_news = db['ntp_platform_news_extend_cor']
 
 def parseStopWord():
     json_data=open('stopword.json')

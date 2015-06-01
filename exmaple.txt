@@ -1,0 +1,21 @@
+>>> import sklearn
+>>> import numpy as np
+>>> a = np.array([[1,2,3],[1,1,1]])
+>>> a
+array([[1, 2, 3],
+       [1, 1, 1]])
+>>> x = a.copy()
+>>> x
+array([[1, 2, 3],
+       [1, 1, 1]])
+>>> y = np.array([1,0])
+>>> import scipy as sp
+>>> from sklearn import linear_model
+>>> c = linear_model.LogisticRegression()
+>>> c.fit(x,y)
+LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty='l2', random_state=None, tol=0.0001)
+>>> test = np.array([1,1,1])
+>>> c.predict(test)
+array([1])
+>>>
