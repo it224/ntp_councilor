@@ -13,11 +13,11 @@ from bson.objectid import ObjectId
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 ntp_crs                    = db["ntp_platform"]                 #所有政見638筆  ntp_crs
-ntp_platform_bill_cor      = db["ntp_platform_bill_cor"]     #政見議案關係   ntp_platform_bill_cor
-ntp_platform_news_cor      = db["ntp_platform_news_cor"]      #政見新聞關係   ntp_platform_news_cor
-ntp_platform_news_pn_cor   = db["ntp_platform_news_pn_cor"]   #政見新聞正負面  ntp_platform_news_pn_cor
-ntp_platform_bill_join_cor = db["ntp_platform_bill_join_cor"] #政見議案參與數  ntp_platform_bill_join_cor
-ntp_platform_SAW           = db["ntp_platform_SAW_entropy"]
+ntp_platform_bill_cor      = db["ntp_platform_bill_extend_cor"]     #政見議案關係   ntp_platform_bill_cor
+ntp_platform_news_cor      = db["ntp_platform_news_extend_cor"]      #政見新聞關係   ntp_platform_news_cor
+ntp_platform_news_pn_cor   = db["ntp_platform_news_pn_extend_cor"]   #政見新聞正負面  ntp_platform_news_pn_cor
+ntp_platform_bill_join_cor = db["ntp_platform_bill_join_extend_cor"] #政見議案參與數  ntp_platform_bill_join_cor
+ntp_platform_SAW           = db["ntp_platform_SAW_entropy_extend"]
 
 #把每個 attr 做正規化
 def attrbuteNormalize(attribute, key):

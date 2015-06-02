@@ -19,12 +19,12 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 
 collection_cr_plat = db['ntp_platform']
-collection_plat_bill_cor      = db["ntp_platform_bill_cor"]
-collection_plat_news_cor      = db['ntp_platform_news_cor']
-collection_plat_bill_join_cor = db['ntp_platform_bill_join_cor']
-collection_plat_news_pn_cor   = db['ntp_platform_news_pn_cor']
+collection_plat_bill_cor      = db["ntp_platform_bill_extend_cor"]
+collection_plat_news_cor      = db['ntp_platform_news_extend_cor']
+collection_plat_bill_join_cor = db['ntp_platform_bill_join_extend_cor']
+collection_plat_news_pn_cor   = db['ntp_platform_news_pn_extend_cor']
 
-collection_plat_pairwise_sort   = db['ntp_platform_PAIRWISE_sort']
+collection_plat_pairwise_sort   = db['ntp_platform_PAIRWISE_extend_sort']
 
 
 

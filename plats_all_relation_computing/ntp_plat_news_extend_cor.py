@@ -18,6 +18,7 @@ collection_news = db["ntp_news_url_list_ckip"]
 collection_same_word = db['same_word_my_country']
 collection_cr_plat = db['ntp_platform']
 collection_plat_news = db['ntp_platform_news_extend_cor']
+all_news_parse_dict = {}
 
 def parseStopWord():
     json_data=open('stopword.json')
@@ -33,28 +34,25 @@ def extendWord(plat_terms):
             plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
     return plat_all_words
 
-def extendWord(terms):
-    plat_all_words = list()
-    for term in terms:
-        term_search_results = list(collection_same_word.find({"word": term}))
-        if(len(term_search_results)>0):
-            for term_s_r in term_search_results[0]["sameIds"]:
-                if term_s_r[1] not in plat_all_words:
-                    plat_all_words.append(term_s_r[1])
-                else:
-                    pass
-        else:
-            pass
-    #結束array的擴張
-    print "end extend"
-    return plat_all_words
-
 def removeOneTerm(array):
     array_return = []
     for term in array:
         if len(term) > 1:
             array_return.append(term)
     return array_return
+
+def getNews(news):
+    if str(news["_id"]) not in all_news_parse_dict.keys():
+        news_dict = news
+        news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
+        news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+        news_term_ckip_all = extendWord(news_term_ckip_all)
+        news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+        news_dict["news_term_ckip_all"] = news_term_ckip_all
+        all_news_parse_dict[str(news["_id"])] = news_dict
+        return news_dict
+    else:
+        return all_news_parse_dict[str(news["_id"])]
 
 if __name__ == "__main__":
     stopword = parseStopWord()
@@ -66,30 +64,21 @@ if __name__ == "__main__":
         save_dict["name"]=plat["cr_name"]
         news_arr = []
         all_count = 0
+
+        #刪除stopword            
+        plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
+        #刪除一個字的(第一次)
+        plat_terms = removeOneTerm(plat_terms)
+        #擴張詞彙
+        plat_terms = extendWord(plat_terms)
+        #刪除一個字的(第二次)
+        plat_terms = removeOneTerm(plat_terms)
+
         news_list = list(collection_news.find({"cr_id":plat["cr_id"]}))
-        print plat["cr_name"].encode('utf-8')
-        print "的新聞"
-        print "news_list"
-        print len(news_list)
-        print ""        
         for news in news_list:
             news_dict = {}
-            
-            #刪除stopword            
-            plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
-            news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
-
-            #刪除一個字的(第一次)
-            plat_terms = removeOneTerm(plat_terms)
-            news_term_ckip_all = removeOneTerm(news_term_ckip_all)
-
-            #擴張詞彙
-            plat_terms = extendWord(plat_terms)
-            bill_term_ckip_all = extendWord(bill_term_ckip_all)
-
-            #刪除一個字的(第二次)
-            plat_terms = removeOneTerm(plat_terms)
-            news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+            news_use = getNews(news)
+            news_term_ckip_all = news_use["news_term_ckip_all"]
 
             interArr = list(set(news_term_ckip_all).intersection(set(plat_terms)))
             cor_value = 0
@@ -105,8 +94,7 @@ if __name__ == "__main__":
             ac = 0
         save_dict["accuracy"] = ac
         save_dict["news_list"] = news_arr
-        # print save_dict
+        print save_dict
         collection_plat_news.save(save_dict)
-        break
     print "end all"
     exit(0)

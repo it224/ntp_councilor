@@ -18,6 +18,7 @@ collection_bills = db["ntp_bills"]
 collection_cr_plat = db['ntp_platform']
 collection_same_word = db['same_word_my_country']
 collection_plat_bill = db['ntp_platform_bill_extend_cor']
+all_bill_parse_dict = {} #切好詞的bill就放裡面，
     
 def parseStopWord():
     json_data=open('stopword.json')
@@ -29,8 +30,12 @@ def extendWord(plat_terms):
     plat_all_words = plat_terms
     for term in plat_terms:
         termFind = collection_same_word.find({"word":term})
-        if termFind.count() > 0:
-            plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
+        try:
+            if termFind.count() > 0:
+                plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
+        except Exception, e:
+            print e
+            raise
     return plat_all_words
 
 def removeOneTerm(array):
@@ -39,6 +44,20 @@ def removeOneTerm(array):
         if len(term) > 1:
             array_return.append(term)
     return array_return
+
+def getBill(bill):
+    if str(bill["_id"]) not in all_bill_parse_dict.keys():
+        bill_dict = bill
+        bill_term_ckip_all = list(set(bill["description_term"]).difference(set(stopword)))
+        bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
+        bill_term_ckip_all = extendWord(bill_term_ckip_all)
+        bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
+        bill_dict["bill_term_ckip_all"] = bill_term_ckip_all
+        all_bill_parse_dict[str(bill["_id"])] = bill_dict
+        return bill_dict
+    else:
+        return all_bill_parse_dict[str(bill["_id"])]
+        
 
 if __name__ == "__main__":
     stopword = parseStopWord()
@@ -50,25 +69,21 @@ if __name__ == "__main__":
         save_dict["name"]=plat["cr_name"]
         bill_arr = []
         all_count = 0
+
+        #刪除stopword            
+        plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
+        #刪除一個字的(第一次)
+        plat_terms = removeOneTerm(plat_terms)
+        #擴張詞彙
+        plat_terms = extendWord(plat_terms)
+        #刪除一個字的(第二次)
+        plat_terms = removeOneTerm(plat_terms)
+
         bills_list = list(collection_bills.find({"$or":[{"proposed_id" : plat["cr_id"]}, { "petitioned_id" : plat["cr_id"]}]}))
         for bill in bills_list:
             bill_dict = {}
-            
-            #刪除stopword            
-            plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
-            bill_term_ckip_all = list(set(bill["description_term"]).difference(set(stopword)))
-
-            #刪除一個字的(第一次)
-            plat_terms = removeOneTerm(plat_terms)
-            news_term_ckip_all = removeOneTerm(news_term_ckip_all)
-
-            #擴張詞彙
-            plat_terms = extendWord(plat_terms)
-            bill_term_ckip_all = extendWord(bill_term_ckip_all)
-
-            #刪除一個字的(第二次)
-            plat_terms = removeOneTerm(plat_terms)
-            bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
+            bill_use = getBill(bill)
+            bill_term_ckip_all = bill_use["bill_term_ckip_all"]
 
             #取交集
             interArr = list(set(bill_term_ckip_all).intersection(set(plat_terms)))
