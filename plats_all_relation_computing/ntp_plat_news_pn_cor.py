@@ -22,7 +22,7 @@ platform 中 news 正負面的比例
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
-collection_news = db["ntp_platform_news_cor"]
+collection_news = db["ntp_platform_news_extend_cor"]
 collection_plat_news_pn = db['ntp_platform_news_pn_cor']
 
 def returnFile(path):

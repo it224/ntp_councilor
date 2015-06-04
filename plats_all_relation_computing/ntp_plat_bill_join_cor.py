@@ -18,7 +18,7 @@ platform 中 bills 的參與個數
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 collection_plat_bill = db["ntp_platform_bill_extend_cor"]
-collection_plat_bill_join = db['ntp_platform_bill_join_extend_cor']
+collection_plat_bill_join = db['ntp_platform_bill_join_cor']
 
 
 if __name__ == "__main__":
