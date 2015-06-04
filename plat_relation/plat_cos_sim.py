@@ -64,12 +64,12 @@ for plat in plats:
     for plat_other in plats:
         vector2 = Counter(extendWord(removeOneTerm(plat_other["platforms_term"])))
         cosine = get_cosine(vector1, vector2)
-        dic_other[str(plat_other['_id'])]= cosine
+        tamimoto = get_tamimoto(vector1, vector2)
+        dic_other[str(plat_other['_id'])]= {"cosine":cosine, "tamimoto":tamimoto}
         print plat["_id"]
         print plat_other["_id"]
-        print 'Cosine:', cosine
         print ""
     dic["cosine_other"] = dic_other
     collection.save(dic)
     print ""
-    break
+exit(0)
