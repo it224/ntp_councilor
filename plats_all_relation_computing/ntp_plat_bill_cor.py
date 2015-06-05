@@ -70,7 +70,7 @@ def compute_plat_bill_cor_Value():
         同時也是給pairwise用的
         
     '''
-    print ""
+    print "hello"
 
 if __name__ == "__main__":
     stopword = parseStopWord()
@@ -82,6 +82,7 @@ if __name__ == "__main__":
         save_dict["_id"]=plat["_id"]
         save_dict["cr_id"]=plat["cr_id"]
         save_dict["name"]=plat["cr_name"]
+        all_bill_dict = {}
         bill_arr = []
         all_count = 0
 
@@ -109,6 +110,7 @@ if __name__ == "__main__":
             bill_dict["bill_id"] = bill["_id"]
             bill_dict["interWord"] = interArr
             bill_dict["cor_value"] = cor_value
+            all_bill_dict[str(bill["_id"])] = bill_dict
             bill_arr.append(bill_dict)
             all_count = all_count+cor_value
         if len(bill_arr) != 0:
@@ -116,7 +118,7 @@ if __name__ == "__main__":
         else:
             ac = 0
         save_dict["accuracy"] = ac
-        save_dict["bill_list"] = bill_arr
+        save_dict["all_bill_dict"] = all_bill_dict
         print "save_dict"
         print save_dict
         print ""

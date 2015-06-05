@@ -71,6 +71,7 @@ if __name__ == "__main__":
         save_dict["cr_id"]=plat["cr_id"]
         save_dict["name"]=plat["cr_name"]
         news_arr = []
+        all_news_dict = {}
         all_count = 0
 
         #刪除stopword          
@@ -98,6 +99,7 @@ if __name__ == "__main__":
             news_dict["interWord"] = interArr
             news_dict["cor_value"] = cor_value
             news_arr.append(news_dict)
+            all_news_dict[str(news["_id"])] = news_dict
             all_count = all_count+cor_value
         if len(news_arr) != 0:
             ac = all_count/len(news_arr)
@@ -105,6 +107,7 @@ if __name__ == "__main__":
             ac = 0
         save_dict["accuracy"] = ac
         save_dict["news_list"] = news_arr
+        save_dict["all_news_dict"] = all_news_dict
         print save_dict
         collection_plat_news.save(save_dict)
     print "end all"

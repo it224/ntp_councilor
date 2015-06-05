@@ -78,6 +78,7 @@ if __name__ == "__main__":
         save_dict["cr_id"]=plat_news["cr_id"]
         save_dict["name"]=plat_news["name"]
         news_arr = []
+        all_news_dict = {}
         all_count = 0
         news_list = list(plat_news["news_list"])
         for news in news_list:
@@ -98,6 +99,7 @@ if __name__ == "__main__":
             news_dict["news_id"] = news["_id"]
             news_dict["np_cor_value"] = so
             news_arr.append(news_dict)
+            all_news_dict[str(news["_id"])] = news_dict
             all_count = all_count+so
                     
         if len(news_arr) != 0:
@@ -107,6 +109,7 @@ if __name__ == "__main__":
         save_dict["all_so_normalize"] = ac
         save_dict["all_so"] = all_count
         save_dict["news_list"] = news_arr
+        save_dict["all_news_dict"] = all_news_dict
         collection_plat_news_pn.save(save_dict)
     print "end all"
     exit(0)

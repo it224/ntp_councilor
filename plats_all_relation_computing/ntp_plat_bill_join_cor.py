@@ -49,6 +49,7 @@ if __name__ == "__main__":
         save_dict["name"]=plat["name"]
         all_count = 0
         bill_arr = []
+        all_bill_dict = {}
         bills_list = plat["bill_list"]
         for bill in bills_list:
             bill_dict = {}
@@ -63,9 +64,9 @@ if __name__ == "__main__":
             so = math.log(pso_positive/nso_negative)
             so = so *bill["cor_value"]
 
-
             bill_dict["bill_id"] = bill["_id"]
             bill_dict["np_cor_value"] = so
+            all_bill_dict[str(bill["_id"])] = bill_dict
             bill_arr.append(bill_dict)
 
             all_count = all_count+so
@@ -76,6 +77,7 @@ if __name__ == "__main__":
             join_count = 0
         save_dict["join_count"] = join_count
         save_dict["bill_list"]  = bill_arr
+        save_dict["all_bill_dict"]  = all_bill_dict
         print save_dict
         collection_plat_bill_join.save(save_dict)
     print "end all"
