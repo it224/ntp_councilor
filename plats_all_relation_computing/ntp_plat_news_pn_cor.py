@@ -23,6 +23,7 @@ platform 中 news 正負面的比例
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 collection_news = db["ntp_platform_news_cor"]
+collection_all_news = db["ntp_news_url_list_ckip"]
 collection_plat_news_pn = db['ntp_platform_news_pn_cor']
 all_news_parse_dict = {}
 
@@ -50,11 +51,11 @@ def removeOneTerm(array):
             array_return.append(term)
     return array_return
 
-def getNews(news):
-    if str(news["_id"]) not in all_news_parse_dict.keys():
-        news_dict = news
+def getNews_withID(news_id):
+    if str(news_id) not in all_news_parse_dict.keys():
+        news_dict = collection_all_news.find_one({"_id":news_id})
         #刪除stopword
-        news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
+        news_term_ckip_all = list(set(news_dict["story_term_ckip_all"]).difference(set(stopword)))
         #刪除一個字的(第一次)
         news_term_ckip_all = removeOneTerm(news_term_ckip_all)
         #擴張詞彙
@@ -64,10 +65,10 @@ def getNews(news):
         #刪除一個字的(第二次)
         news_term_ckip_all = removeOneTerm(news_term_ckip_all)
         news_dict["news_term_ckip_all"] = news_term_ckip_all
-        all_news_parse_dict[str(news["_id"])] = news_dict
+        all_news_parse_dict[str(news_dict["_id"])] = news_dict
         return news_dict
     else:
-        return all_news_parse_dict[str(news["_id"])]
+        return all_news_parse_dict[str(news_id)]
 
 if __name__ == "__main__":
     stopword = parseStopWord()
@@ -84,8 +85,8 @@ if __name__ == "__main__":
         for news in news_list:
             news_dict = {}
             news_cor_value = news["cor_value"]
-            news = news["news"]
-            news_use = getNews(news)
+            news_id = news["news_id"]
+            news_use = getNews_withID(news_id)
             news_term_ckip_all = news_use["news_term_ckip_all"]
             
             #算正負面的比例
@@ -96,10 +97,10 @@ if __name__ == "__main__":
             so = math.log(pso_positive/nso_negative)
             so = so *news_cor_value
             
-            news_dict["news_id"] = news["_id"]
+            news_dict["news_id"] = news["news_id"]
             news_dict["np_cor_value"] = so
             news_arr.append(news_dict)
-            all_news_dict[str(news["_id"])] = news_dict
+            all_news_dict[str(news["news_id"])] = news_dict
             all_count = all_count+so
                     
         if len(news_arr) != 0:

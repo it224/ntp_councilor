@@ -63,13 +63,13 @@ collection_cr_plat            = db['ntp_platform']
 ntp_plat_bill_cor.compute_plat_bill_cor_Value()
 
 
-# if __name__ == "__main__":
-#     plat_list = list(collection_cr_plat.find())
-#     dic = {}
-#     for i, plat in enumerate(plat_list):
-#         plat = plat_list[i]
-#         if str(plat["_id"]) not in dic.keys():
-#             dic[str(plat["_id"])] = 0
+if __name__ == "__main__":
+    plat_list = list(collection_cr_plat.find())
+    plat_dic = {}
+    for i, plat in enumerate(plat_list):
+        plat = plat_list[i]
+        if str(plat["_id"]) not in plat_dic.keys():
+            plat_dic[str(plat["_id"])] = 0
 #         # plat_bill_cor      = collection_plat_bill_cor.find_one({"_id":plat["_id"]})["accuracy"]
 #         # plat_news_cor      = collection_plat_news_cor.find_one({"_id":plat["_id"]})["accuracy"]
 #         # plat_bill_join_cor = collection_plat_bill_join_cor.find_one({"_id":plat["_id"]})["join_count"]
