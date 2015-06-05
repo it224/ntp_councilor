@@ -23,6 +23,18 @@ collection_plat_bill_join = db['ntp_platform_bill_join_cor']
 collection_same_word = db['same_word_my_country']
 all_bill_parse_dict = {} #切好詞的bill就放裡面
 
+
+def returnFile(path):
+    content_use = list()
+    with open("./ntusd/ntusd-"+path+".txt") as f:
+        content = f.readlines()
+    for word in content:
+        content_use.append(word.decode('utf-8').split('\n')[0])
+    return content_use
+
+positive_lists = returnFile("positive")
+negative_lists = returnFile("negative")
+
 def parseStopWord():
     json_data=open('stopword.json')
     data = json.load(json_data)
