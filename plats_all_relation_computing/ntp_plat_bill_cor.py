@@ -118,6 +118,7 @@ if __name__ == "__main__":
         else:
             ac = 0
         save_dict["accuracy"] = ac
+        save_dict["bill_list"]  = bill_arr
         save_dict["all_bill_dict"] = all_bill_dict
         print "save_dict"
         print save_dict
