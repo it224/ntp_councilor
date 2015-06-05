@@ -48,9 +48,15 @@ def removeOneTerm(array):
 def getBill(bill):
     if str(bill["_id"]) not in all_bill_parse_dict.keys():
         bill_dict = bill
+        #刪除stopword
         bill_term_ckip_all = list(set(bill["description_term"]).difference(set(stopword)))
+        #刪除一個字的(第一次)
         bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
+        #擴張詞彙
         bill_term_ckip_all = extendWord(bill_term_ckip_all)
+        #刪除stopword(第二次)
+        bill_term_ckip_all = list(set(bill_term_ckip_all).difference(set(stopword)))
+        #刪除一個字的(第二次)
         bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
         bill_dict["bill_term_ckip_all"] = bill_term_ckip_all
         all_bill_parse_dict[str(bill["_id"])] = bill_dict
@@ -58,10 +64,19 @@ def getBill(bill):
     else:
         return all_bill_parse_dict[str(bill["_id"])]
         
+def compute_plat_bill_cor_Value():
+    '''
+        除了自己計算之外
+        同時也是給pairwise用的
+        
+    '''
+    print ""
 
 if __name__ == "__main__":
     stopword = parseStopWord()
-    plat_list = collection_cr_plat.find()
+    plat_list = list(collection_cr_plat.find())
+    #舊版本，只抓與該議員有關的議案 bills_list = list(collection_bills.find({"$or":[{"proposed_id" : plat["cr_id"]}, { "petitioned_id" : plat["cr_id"]}]}))
+    bills_list = list(collection_bills.find())
     for plat in plat_list:
         save_dict ={}
         save_dict["_id"]=plat["_id"]
@@ -70,16 +85,17 @@ if __name__ == "__main__":
         bill_arr = []
         all_count = 0
 
-        #刪除stopword            
+        #刪除stopword
         plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
         #刪除一個字的(第一次)
         plat_terms = removeOneTerm(plat_terms)
         #擴張詞彙
         plat_terms = extendWord(plat_terms)
+        #刪除stopword(第二次)
+        plat_terms = list(set(plat_terms).difference(set(stopword)))
         #刪除一個字的(第二次)
         plat_terms = removeOneTerm(plat_terms)
 
-        bills_list = list(collection_bills.find({"$or":[{"proposed_id" : plat["cr_id"]}, { "petitioned_id" : plat["cr_id"]}]}))
         for bill in bills_list:
             bill_dict = {}
             bill_use = getBill(bill)
@@ -91,6 +107,7 @@ if __name__ == "__main__":
             if(len(interArr)!=0):
                 cor_value = len(interArr)/len(plat_terms)
             bill_dict["bill"] = bill
+            bill_dict["interWord"] = interArr
             bill_dict["cor_value"] = cor_value
             bill_arr.append(bill_dict)
             all_count = all_count+cor_value

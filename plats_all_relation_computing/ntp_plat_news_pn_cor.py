@@ -22,8 +22,9 @@ platform 中 news 正負面的比例
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
-collection_news = db["ntp_platform_news_extend_cor"]
+collection_news = db["ntp_platform_news_cor"]
 collection_plat_news_pn = db['ntp_platform_news_pn_cor']
+all_news_parse_dict = {}
 
 def returnFile(path):
     content_use = list()
@@ -35,7 +36,6 @@ def returnFile(path):
 
 positive_lists = returnFile("positive")
 negative_lists = returnFile("negative")
-print positive_lists
 
 def parseStopWord():
     json_data=open('stopword.json')
@@ -50,6 +50,25 @@ def removeOneTerm(array):
             array_return.append(term)
     return array_return
 
+def getNews(news):
+    if str(news["_id"]) not in all_news_parse_dict.keys():
+        news_dict = news
+        #刪除stopword
+        news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
+        #刪除一個字的(第一次)
+        news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+        #擴張詞彙
+        news_term_ckip_all = extendWord(news_term_ckip_all)
+        #刪除stopword(第二次)
+        news_term_ckip_all = list(set(news_term_ckip_all).difference(set(stopword)))
+        #刪除一個字的(第二次)
+        news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+        news_dict["news_term_ckip_all"] = news_term_ckip_all
+        all_news_parse_dict[str(news["_id"])] = news_dict
+        return news_dict
+    else:
+        return all_news_parse_dict[str(news["_id"])]
+
 if __name__ == "__main__":
     stopword = parseStopWord()
     plat_news_list = list(collection_news.find())
@@ -61,36 +80,25 @@ if __name__ == "__main__":
         news_arr = []
         all_count = 0
         news_list = list(plat_news["news_list"])
-        print len(news_list)
         for news in news_list:
+            news_dict = {}
             news_cor_value = news["cor_value"]
             news = news["news"]
-            news_dict = {}
-
-            #刪除stopword            
-            news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
-
-            #刪除一個字的
-            news_term_ckip_all = removeOneTerm(news_term_ckip_all)
-
+            news_use = getNews(news)
+            news_term_ckip_all = news_use["news_term_ckip_all"]
+            
             #算正負面的比例
             pso_positive = len(list(set(news_term_ckip_all).intersection(set(positive_lists))))+1 #避免為0
             nso_negative = len(list(set(news_term_ckip_all).intersection(set(negative_lists))))+1 #避免為0
-            print pso_positive
-            print nso_negative
+            
             #算比例
             so = math.log(pso_positive/nso_negative)
-            upper = math.log(pso_positive)
-            so_normalize = (so + upper)/2*upper
-            so_normalize = so_normalize *news_cor_value
-            
-            print so_normalize
-            print ""
+            so = so *news_cor_value
             
             news_dict["news"] = news
-            news_dict["np_cor_value"] = so_normalize
+            news_dict["np_cor_value"] = so
             news_arr.append(news_dict)
-            all_count = all_count+so_normalize
+            all_count = all_count+so
                     
         if len(news_arr) != 0:
             ac = all_count/len(news_arr)

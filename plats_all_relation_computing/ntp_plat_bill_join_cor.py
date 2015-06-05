@@ -17,8 +17,27 @@ platform 中 bills 的參與個數
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
-collection_plat_bill = db["ntp_platform_bill_extend_cor"]
+collection_plat_bill = db["ntp_platform_bill_cor"]
 collection_plat_bill_join = db['ntp_platform_bill_join_cor']
+
+def getBill(bill):
+    if str(bill["_id"]) not in all_bill_parse_dict.keys():
+        bill_dict = bill
+        #刪除stopword
+        bill_term_ckip_all = list(set(bill["description_term"]).difference(set(stopword)))
+        #刪除一個字的(第一次)
+        bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
+        #擴張詞彙
+        bill_term_ckip_all = extendWord(bill_term_ckip_all)
+        #刪除stopword(第二次)
+        bill_term_ckip_all = list(set(bill_term_ckip_all).difference(set(stopword)))
+        #刪除一個字的(第二次)
+        bill_term_ckip_all = removeOneTerm(bill_term_ckip_all)
+        bill_dict["bill_term_ckip_all"] = bill_term_ckip_all
+        all_bill_parse_dict[str(bill["_id"])] = bill_dict
+        return bill_dict
+    else:
+        return all_bill_parse_dict[str(bill["_id"])]
 
 
 if __name__ == "__main__":
@@ -29,15 +48,34 @@ if __name__ == "__main__":
         save_dict["cr_id"]=plat["cr_id"]
         save_dict["name"]=plat["name"]
         all_count = 0
+        bill_arr = []
         bills_list = plat["bill_list"]
         for bill in bills_list:
-            if bill["cor_value"] > 0:
-                all_count = all_count+1
+            bill_dict = {}
+            bill_use = getBill(bill)
+            bill_term_ckip_all = bill_use["bill_term_ckip_all"]
+            
+            #算正負面的比例
+            pso_positive = len(list(set(bill_term_ckip_all).intersection(set(positive_lists))))+1 #避免為0
+            nso_negative = len(list(set(bill_term_ckip_all).intersection(set(negative_lists))))+1 #避免為0
+
+            #算比例
+            so = math.log(pso_positive/nso_negative)
+            so = so *bill["cor_value"]
+
+
+            bill_dict["bill"] = bill
+            bill_dict["np_cor_value"] = so
+            bill_arr.append(bill_dict)
+
+            all_count = all_count+so
+
         if all_count != 0:
             join_count = all_count/len(bills_list)
         else:
             join_count = 0
         save_dict["join_count"] = join_count
+        save_dict["bill_list"]  = bill_arr
         print save_dict
         collection_plat_bill_join.save(save_dict)
     print "end all"

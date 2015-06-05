@@ -44,9 +44,15 @@ def removeOneTerm(array):
 def getNews(news):
     if str(news["_id"]) not in all_news_parse_dict.keys():
         news_dict = news
+        #刪除stopword
         news_term_ckip_all = list(set(news["story_term_ckip_all"]).difference(set(stopword)))
+        #刪除一個字的(第一次)
         news_term_ckip_all = removeOneTerm(news_term_ckip_all)
+        #擴張詞彙
         news_term_ckip_all = extendWord(news_term_ckip_all)
+        #刪除stopword(第二次)
+        news_term_ckip_all = list(set(news_term_ckip_all).difference(set(stopword)))
+        #刪除一個字的(第二次)
         news_term_ckip_all = removeOneTerm(news_term_ckip_all)
         news_dict["news_term_ckip_all"] = news_term_ckip_all
         all_news_parse_dict[str(news["_id"])] = news_dict
@@ -56,7 +62,9 @@ def getNews(news):
 
 if __name__ == "__main__":
     stopword = parseStopWord()
-    plat_list = collection_cr_plat.find()
+    plat_list = list(collection_cr_plat.find())
+    #舊版方法，只找與議員有關的新聞 news_list = list(collection_news.find({"cr_id":plat["cr_id"]}))
+    news_list = list(collection_news.find())
     for plat in plat_list:
         save_dict ={}
         save_dict["_id"]=plat["_id"]
@@ -65,16 +73,18 @@ if __name__ == "__main__":
         news_arr = []
         all_count = 0
 
-        #刪除stopword            
+        #刪除stopword          
         plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
         #刪除一個字的(第一次)
         plat_terms = removeOneTerm(plat_terms)
         #擴張詞彙
         plat_terms = extendWord(plat_terms)
+        #刪除stopword(第二次)
+        plat_terms = list(set(plat_terms).difference(set(stopword)))
         #刪除一個字的(第二次)
         plat_terms = removeOneTerm(plat_terms)
 
-        news_list = list(collection_news.find({"cr_id":plat["cr_id"]}))
+        
         for news in news_list:
             news_dict = {}
             news_use = getNews(news)
@@ -85,6 +95,7 @@ if __name__ == "__main__":
             if(len(interArr)!=0):
                 cor_value = len(interArr)/len(plat_terms)
             news_dict["news"] = news
+            news_dict["interWord"] = interArr
             news_dict["cor_value"] = cor_value
             news_arr.append(news_dict)
             all_count = all_count+cor_value
