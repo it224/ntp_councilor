@@ -41,6 +41,8 @@ def parseStopWord():
     json_data.close()
     return data
 
+stopword = parseStopWord()
+
 
 def extendWord(plat_terms):
     plat_all_words = plat_terms
@@ -80,9 +82,53 @@ def getBill_withID(bill_id):
     else:
         return all_bill_parse_dict[str(bill_id)]
 
+def compute(plat_bill_list, bill_list):
+    #plat_bill_list全部是同一個cr的
+    cr_dict = {}
+    cr_dict["_id"] = plat_bill_list[0]["cr_id"]
+    cr_dict["name"] = plat_bill_list[0]["name"]
+    plat_bill_list_use = []
+
+    for plat_bill in plat_bill_list:
+        all_bill_dict = plat_bill["all_bill_dict"]
+        save_dict ={}
+        save_dict["_id"]=plat["_id"]
+        save_dict["cr_id"]=plat["cr_id"]
+        save_dict["name"]=plat["name"]
+        all_count = 0
+        bill_arr = []
+
+        for bill in bills_list:
+            bill_dict = {}
+            bill_use = getBill_withID(bill["_id"])
+            bill_term_ckip_all = bill_use["bill_term_ckip_all"]
+
+            #算正負面的比例
+            pso_positive = len(list(set(bill_term_ckip_all).intersection(set(positive_lists))))+1 #避免為0
+            nso_negative = len(list(set(bill_term_ckip_all).intersection(set(negative_lists))))+1 #避免為0
+
+            #算比例
+            so = math.log(pso_positive/nso_negative)
+            so = so *all_bill_dict[bill["_id"]]["cor_value"]
+
+            bill_dict["bill_id"] = bill["_id"]
+            bill_dict["np_cor_value"] = so
+            bill_arr.append(bill_dict)
+
+            all_count = all_count+so
+            print all_count
+        if all_count != 0:
+            join_count = all_count/len(bills_list)
+        else:
+            join_count = 0
+        save_dict["join_count"] = join_count
+        save_dict["bill_list"]  = bill_arr
+        plat_bill_list_use.append(save_dict)
+    cr_dict["plat_bill_list_use"] = plat_bill_list_use
+    return cr_dict
 
 if __name__ == "__main__":
-    stopword = parseStopWord()
+    
     plat_list = list(collection_plat_bill.find())
     for plat in plat_list:
         save_dict ={}

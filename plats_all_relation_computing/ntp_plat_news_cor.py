@@ -20,12 +20,13 @@ collection_cr_plat = db['ntp_platform']
 collection_plat_news = db['ntp_platform_news_cor']
 all_news_parse_dict = {}
 
+
 def parseStopWord():
     json_data=open('stopword.json')
     data = json.load(json_data)
     json_data.close()
     return data
-
+stopword = parseStopWord()
 def extendWord(plat_terms):
     plat_all_words = plat_terms
     for term in plat_terms:
@@ -60,8 +61,55 @@ def getNews(news):
     else:
         return all_news_parse_dict[str(news["_id"])]
 
+def compute(plat_list, news_list): 
+    cr_dict = {}
+    cr_dict["_id"] = str(plat_list[0]["cr_id"])
+    cr_dict["name"] = plat_list[0]["cr_name"]
+    plat_news_list_use = []
+
+    for plat in plat_list:        
+        save_dict ={}
+        save_dict["_id"]= str(plat["_id"])
+        save_dict["cr_id"]= str(plat["cr_id"])
+        save_dict["name"]= plat["cr_name"]
+        news_arr = []
+        all_news_dict = {}
+        all_count = 0
+
+        plat_terms = list(set(plat["platforms_term"]).difference(set(stopword)))
+        plat_terms = removeOneTerm(plat_terms)
+        plat_terms = extendWord(plat_terms)
+        plat_terms = list(set(plat_terms).difference(set(stopword)))
+        plat_terms = removeOneTerm(plat_terms)
+
+        for news in news_list:
+            news_dict = {}
+            news_use = getNews(news)
+            news_term_ckip_all = news_use["news_term_ckip_all"]
+
+            interArr = list(set(news_term_ckip_all).intersection(set(plat_terms)))
+            cor_value = 0
+            if(len(interArr)!=0):
+                cor_value = len(interArr)/len(plat_terms)
+            news_dict["news_id"] = str(news["_id"])
+            news_dict["news_cr_id"] = str(cr_dict["_id"])
+            news_dict["interWord"] = interArr
+            news_dict["cor_value"] = cor_value
+            news_arr.append(news_dict)
+            all_news_dict[str(news["_id"])] = news_dict
+            all_count = all_count+cor_value
+        if len(news_arr) != 0:
+            ac = all_count/len(news_arr)
+        else:
+            ac = 0
+        save_dict["accuracy"] = ac
+        save_dict["news_list"] = news_arr
+        save_dict["all_news_dict"] = all_news_dict
+        plat_news_list_use.append(save_dict)
+    cr_dict["plat_news_list_use"] = plat_news_list_use
+    return cr_dict
+
 if __name__ == "__main__":
-    stopword = parseStopWord()
     plat_list = list(collection_cr_plat.find())
     #舊版方法，只找與議員有關的新聞 news_list = list(collection_news.find({"cr_id":plat["cr_id"]}))
     news_list = list(collection_news.find())

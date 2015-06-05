@@ -45,6 +45,8 @@ def parseStopWord():
     json_data.close()
     return data
 
+stopword = parseStopWord()
+
 def extendWord(plat_terms):
     plat_all_words = plat_terms
     for term in plat_terms:
@@ -83,8 +85,53 @@ def getNews_withID(news_id):
     else:
         return all_news_parse_dict[str(news_id)]
 
+def compute(plat_news_list, news_list):
+    #plat_bill_list全部是同一個cr的
+    cr_dict = {}
+    cr_dict["_id"] = plat_news_list[0]["cr_id"]
+    cr_dict["name"] = plat_news_list[0]["name"]
+    plat_news_list_use = []
+
+    for plat_news in plat_news_list:
+        all_news_dict = plat_news["all_news_dict"]
+        save_dict ={}
+        save_dict["_id"]=plat["_id"]
+        save_dict["cr_id"]=plat["cr_id"]
+        save_dict["name"]=plat["name"]
+        all_count = 0
+        news_arr = []
+
+        for news in news_list:
+            news_dict = {}
+            news_use = getNews_withID(news["_id"])
+            news_term_ckip_all = news_use["news_term_ckip_all"]
+
+            #算正負面的比例
+            pso_positive = len(list(set(news_term_ckip_all).intersection(set(positive_lists))))+1 #避免為0
+            nso_negative = len(list(set(news_term_ckip_all).intersection(set(negative_lists))))+1 #避免為0
+
+            #算比例
+            so = math.log(pso_positive/nso_negative)
+            so = so *all_news_dict[news["_id"]]["cor_value"]
+
+            news_dict["news_id"] = news["_id"]
+            news_dict["np_cor_value"] = so
+            news_arr.append(news_dict)
+
+            all_count = all_count+so
+            print all_count
+        if all_count != 0:
+            join_count = all_count/len(news_list)
+        else:
+            join_count = 0
+        save_dict["join_count"] = join_count
+        save_dict["news_list"]  = news_arr
+        plat_news_list_use.append(save_dict)
+    cr_dict["plat_news_list_use"] = plat_news_list_use
+    return cr_dict
+
 if __name__ == "__main__":
-    stopword = parseStopWord()
+    
     plat_news_list = list(collection_news.find())
     for plat_news in plat_news_list:
         save_dict ={}
