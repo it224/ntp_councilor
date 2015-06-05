@@ -38,29 +38,19 @@ value  2 3 1 0 4 次
     抓取議員甲乙的新聞與議案作為subset
     只用這個subset來計算四個attribute的值總和來對打
 '''
-# import sys
-# sys.path.insert(0, '../plats_all_relation_computing/ntp_plat_bill_cor.py')
-# sys.path.insert(0, '../plats_all_relation_computing/ntp_plat_bill_join_cor.py')
-# sys.path.insert(0, '../plats_all_relation_computing/ntp_plat_news_cor.py')
-# sys.path.insert(0, '../plats_all_relation_computing/ntp_plat_news_pn_cor.py')
-
-from import_file import import_file
 
 
-ntp_plat_bill_cor = import_file('../plats_all_relation_computing/ntp_plat_bill_cor.py')
-# import ntp_plat_bill_join_cor.py
-# import ntp_plat_news_cor.py
-# import ntp_plat_news_pn_cor.py
+collection_cr_plat = db['ntp_platform']
+collection_plat_bill_cor      = db["ntp_platform_bill_cor"]
+collection_plat_news_cor      = db['ntp_platform_news_cor']
+collection_plat_bill_join_cor = db['ntp_platform_bill_join_cor']
+collection_plat_news_pn_cor   = db['ntp_platform_news_pn_cor']
+
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 
 
-collection_crs                = db['ntp_crs']
-collection_cr_plat            = db['ntp_platform']
-
-
-ntp_plat_bill_cor.compute_plat_bill_cor_Value()
 
 
 if __name__ == "__main__":

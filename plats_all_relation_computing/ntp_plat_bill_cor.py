@@ -18,7 +18,7 @@ collection_bills = db["ntp_bills"]
 collection_cr_plat = db['ntp_platform']
 collection_same_word = db['same_word_my_country']
 collection_plat_bill = db['ntp_platform_bill_cor']
-all_bill_parse_dict = {} #切好詞的bill就放裡面，
+all_bill_parse_dict = {} #切好詞的bill就放裡面
     
 def parseStopWord():
     json_data=open('stopword.json')
