@@ -25,6 +25,7 @@ db = client['ntp_councilor']
 collection_news = db["ntp_platform_news_cor"]
 collection_all_news = db["ntp_news_url_list_ckip"]
 collection_plat_news_pn = db['ntp_platform_news_pn_cor']
+collection_same_word = db['same_word_my_country']
 all_news_parse_dict = {}
 
 def returnFile(path):
@@ -43,6 +44,18 @@ def parseStopWord():
     data = json.load(json_data)
     json_data.close()
     return data
+
+def extendWord(plat_terms):
+    plat_all_words = plat_terms
+    for term in plat_terms:
+        termFind = collection_same_word.find({"word":term})
+        try:
+            if termFind.count() > 0:
+                plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
+        except Exception, e:
+            print e
+            raise
+    return plat_all_words
 
 def removeOneTerm(array):
     array_return = []
