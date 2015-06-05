@@ -106,9 +106,9 @@ if __name__ == "__main__":
             so = math.log(pso_positive/nso_negative)
             so = so *bill["cor_value"]
 
-            bill_dict["bill_id"] = bill["_id"]
+            bill_dict["bill_id"] = bill["bill_id"]
             bill_dict["np_cor_value"] = so
-            all_bill_dict[str(bill["_id"])] = bill_dict
+            all_bill_dict[str(bill["bill_id"])] = bill_dict
             bill_arr.append(bill_dict)
 
             all_count = all_count+so
