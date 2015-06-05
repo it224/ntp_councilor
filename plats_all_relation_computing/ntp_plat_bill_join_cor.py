@@ -112,7 +112,7 @@ if __name__ == "__main__":
             bill_arr.append(bill_dict)
 
             all_count = all_count+so
-
+            print all_count
         if all_count != 0:
             join_count = all_count/len(bills_list)
         else:
