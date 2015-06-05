@@ -20,6 +20,7 @@ db = client['ntp_councilor']
 collection_plat_bill = db["ntp_platform_bill_cor"]
 collection_all_bill = db["ntp_bills"]
 collection_plat_bill_join = db['ntp_platform_bill_join_cor']
+collection_same_word = db['same_word_my_country']
 all_bill_parse_dict = {} #切好詞的bill就放裡面
 
 def parseStopWord():
@@ -27,6 +28,26 @@ def parseStopWord():
     data = json.load(json_data)
     json_data.close()
     return data
+
+
+def extendWord(plat_terms):
+    plat_all_words = plat_terms
+    for term in plat_terms:
+        termFind = collection_same_word.find({"word":term})
+        try:
+            if termFind.count() > 0:
+                plat_all_words = list(set(plat_all_words) | set(termFind[0]["same_word"]))
+        except Exception, e:
+            print e
+            raise
+    return plat_all_words
+
+def removeOneTerm(array):
+    array_return = []
+    for term in array:
+        if len(term) > 1:
+            array_return.append(term)
+    return array_return
 
 def getBill_withID(bill_id):
     if str(bill_id) not in all_bill_parse_dict.keys():
