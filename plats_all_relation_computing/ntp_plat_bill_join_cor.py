@@ -22,7 +22,11 @@ collection_all_bill = db["ntp_bills"]
 collection_plat_bill_join = db['ntp_platform_bill_join_cor']
 all_bill_parse_dict = {} #切好詞的bill就放裡面
 
-
+def parseStopWord():
+    json_data=open('stopword.json')
+    data = json.load(json_data)
+    json_data.close()
+    return data
 
 def getBill_withID(bill_id):
     if str(bill_id) not in all_bill_parse_dict.keys():
@@ -45,6 +49,7 @@ def getBill_withID(bill_id):
 
 
 if __name__ == "__main__":
+    stopword = parseStopWord()
     plat_list = list(collection_plat_bill.find())
     for plat in plat_list:
         save_dict ={}
