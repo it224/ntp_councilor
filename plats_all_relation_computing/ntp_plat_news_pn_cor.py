@@ -95,7 +95,7 @@ if __name__ == "__main__":
             so = math.log(pso_positive/nso_negative)
             so = so *news_cor_value
             
-            news_dict["news"] = news
+            news_dict["news_id"] = news["_id"]
             news_dict["np_cor_value"] = so
             news_arr.append(news_dict)
             all_count = all_count+so

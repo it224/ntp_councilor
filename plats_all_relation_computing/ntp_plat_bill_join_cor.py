@@ -64,7 +64,7 @@ if __name__ == "__main__":
             so = so *bill["cor_value"]
 
 
-            bill_dict["bill"] = bill
+            bill_dict["bill_id"] = bill["_id"]
             bill_dict["np_cor_value"] = so
             bill_arr.append(bill_dict)
 

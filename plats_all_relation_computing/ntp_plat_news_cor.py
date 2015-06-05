@@ -94,7 +94,7 @@ if __name__ == "__main__":
             cor_value = 0
             if(len(interArr)!=0):
                 cor_value = len(interArr)/len(plat_terms)
-            news_dict["news"] = news
+            news_dict["news_id"] = news["_id"]
             news_dict["interWord"] = interArr
             news_dict["cor_value"] = cor_value
             news_arr.append(news_dict)

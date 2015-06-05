@@ -106,7 +106,7 @@ if __name__ == "__main__":
             cor_value = 0
             if(len(interArr)!=0):
                 cor_value = len(interArr)/len(plat_terms)
-            bill_dict["bill"] = bill
+            bill_dict["bill_id"] = bill["_id"]
             bill_dict["interWord"] = interArr
             bill_dict["cor_value"] = cor_value
             bill_arr.append(bill_dict)
