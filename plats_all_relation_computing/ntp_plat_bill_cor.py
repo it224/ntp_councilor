@@ -74,7 +74,7 @@ def compute(plat_list, bill_list):
 
     for plat in plat_list:
         save_dict ={}
-        save_dict["_id"]=plat["_id"]
+        save_dict["_id"]= plat["_id"]
         all_bill_dict = {}
         bill_arr = []
         all_count = 0
@@ -109,7 +109,7 @@ def compute(plat_list, bill_list):
         save_dict["bill_list"]  = bill_arr
         save_dict["all_bill_dict"] = all_bill_dict
         plat_bill_list_use.append(save_dict)
-    cr_dict["plat_bill_list_use"] = plat_bill_list_use
+    cr_dict["all_plat_bill_cor"] = plat_bill_list_use
     return cr_dict
 
 if __name__ == "__main__":

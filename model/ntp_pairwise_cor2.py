@@ -57,21 +57,24 @@ plat_bill_join_cor            = import_file("../plats_all_relation_computing/ntp
 plat_news_pn_cor              = import_file("../plats_all_relation_computing/ntp_plat_news_pn_cor.py") 
 
 crs = list(collection_crs.find())
+plat_list = list(collection_cr_plat.find())
 
-for cr in crs:
-    plat_list = list(collection_cr_plat.find({"cr_id": cr["_id"]}))
+for cr in crs:    
     bill_list = list(collection_bill.find({"$or":[{"proposed_id" : cr["_id"]}, { "petitioned_id" : cr["_id"]}]}))
     news_list = list(collection_news.find({"cr_id": cr["_id"]}))
 
-    plat_bill_list_cor = list(collection_plat_bill.find({"cr_id": cr["_id"]}))
-    plat_news_list_cor = list(collection_plat_news.find({"cr_id": cr["_id"]}))
+    # plat_bill_list_cor = list(collection_plat_bill.find({"cr_id": cr["_id"]}))
+    # plat_news_list_cor = list(collection_plat_news.find({"cr_id": cr["_id"]}))
 
-    #done cr_plat_bill_cor        = plat_bill_cor.compute(plat_list, bill_list) 
-    #done cr_plat_news_cor        = plat_news_cor.compute(plat_list, news_list)
+    # done 
+    # cr_plat_bill_cor        = plat_bill_cor.compute(plat_list, bill_list) 
+    
+    #done 
+    #cr_plat_news_cor        = plat_news_cor.compute(plat_list, news_list)
 
-    cr_plat_bill_join_cor   = plat_bill_join_cor.compute(plat_bill_list_cor, bill_list)
-    with open('cr_plat_bill_join_cor.json', 'w') as outfile:
-        json.dump(cr_plat_bill_join_cor, outfile)
+    # cr_plat_bill_join_cor   = plat_bill_join_cor.compute(plat_bill_list_cor, bill_list)
+    # with open('cr_plat_bill_join_cor.json', 'w') as outfile:
+    #     json.dump(cr_plat_bill_join_cor, outfile)
     # cr_plat_news_pn_cor     = plat_news_pn_cor.compute(plat_news_list_cor, news_list)       
     break
 
