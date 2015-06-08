@@ -27,10 +27,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['ntp_councilor']
 
 collection_cr_plat = db['ntp_platform']
-collection_plat_bill_cor      = db["ntp_platform_bill_extend_cor"]
-collection_plat_news_cor      = db['ntp_platform_news_extend_cor']
-collection_plat_bill_join_cor = db['ntp_platform_bill_join_extend_cor']
-collection_plat_news_pn_cor   = db['ntp_platform_news_pn_cor']
+collection_cr_for_all_plats   = db['ntp_crs_compare']
 
 
 if __name__ == "__main__":
@@ -41,49 +38,47 @@ if __name__ == "__main__":
         plat = plat_list[i]
         if str(plat["_id"]) not in dic.keys():
             dic[str(plat["_id"])] = 0
-        plat_bill_cor      = collection_plat_bill_cor.find_one({"_id":plat["_id"]})["accuracy"]
-        plat_news_cor      = collection_plat_news_cor.find_one({"_id":plat["_id"]})["accuracy"]
-        plat_bill_join_cor = collection_plat_bill_join_cor.find_one({"_id":plat["_id"]})["join_count"]
-        plat_news_pn_cor   = collection_plat_news_pn_cor.find_one({"_id":plat["_id"]})["all_so_normalize"]
         if i < len(plat_list)-1:
             for j, plat_other in enumerate(plat_list):
                 if i < j:
                     major = 0
                     compare = 0
                     print "j :" + str(j)
-                    plat_other               = plat_list[j]
-                    plat_bill_cor_other      = collection_plat_bill_cor.find_one({"_id":plat_other["_id"]})["accuracy"]
-                    plat_news_cor_other      = collection_plat_news_cor.find_one({"_id":plat_other["_id"]})["accuracy"]
-                    plat_bill_join_cor_other = collection_plat_bill_join_cor.find_one({"_id":plat_other["_id"]})["join_count"]
-                    plat_news_pn_cor_other   = collection_plat_news_pn_cor.find_one({"_id":plat_other["_id"]})["all_so_normalize"]
-
-                    major = plat_bill_cor + plat_news_cor + plat_bill_join_cor + plat_news_pn_cor
-                    compare = plat_bill_cor_other + plat_news_cor_other + plat_bill_join_cor_other + plat_news_pn_cor_other
+                    plat_other = plat_list[j]
                     
-                    '''
-                    major = 0
-                    compare = 0
+                    plat_cr = str(plat["cr_id"])
+                    plat_other_cr = str(plat_other["cr_id"])
 
-                    if plat_bill_cor > plat_bill_cor_other:
-                        major = major+1
-                    else:
-                        compare = compare+1
+                    if plat_cr == plat_other_cr:
+                        cr_compare = collection_cr_for_all_plats.find_one({"cr_id":plat["cr_id"]})
+                        
+                        major_bill_cor =        cr_compare["cr_plat_bill_cor_list"][i]["accuracy"]
+                        major_news_cor =        cr_compare["cr_plat_news_cor_list"][i]["accuracy"]
+                        major_bill_join_cor =   cr_compare["cr_plat_bill_join_cor_list"][i]["join_cor"]
+                        major_news_pn_cor =     cr_compare["cr_plat_news_pn_list"][i]["join_cor"]
 
-                    if plat_news_cor > plat_news_cor_other:
-                        major = major+1
+                        compare_bill_cor =      cr_compare["cr_plat_bill_cor_list"][j]["accuracy"]
+                        compare_news_cor =      cr_compare["cr_plat_news_cor_list"][j]["accuracy"]
+                        compare_bill_join_cor = cr_compare["cr_plat_bill_join_cor_list"][j]["join_cor"]
+                        compare_news_pn_cor =   cr_compare["cr_plat_news_pn_list"][j]["join_cor"]                        
                     else:
-                        compare = compare+1
+                        cr_compare_major = collection_cr_for_all_plats.find_one({"cr_id":plat["cr_id"]})
+                        cr_compare_compare = collection_cr_for_all_plats.find_one({"cr_id":plat_other["cr_id"]})
+                        
+                        major_bill_cor =        cr_compare_major["cr_plat_bill_cor_list"][i]["accuracy"]     +cr_compare_compare["cr_plat_bill_cor_list"][i]["accuracy"]     
+                        major_news_cor =        cr_compare_major["cr_plat_news_cor_list"][i]["accuracy"]     +cr_compare_compare["cr_plat_news_cor_list"][i]["accuracy"]     
+                        major_bill_join_cor =   cr_compare_major["cr_plat_bill_join_cor_list"][i]["join_cor"]+cr_compare_compare["cr_plat_bill_join_cor_list"][i]["join_cor"]
+                        major_news_pn_cor =     cr_compare_major["cr_plat_news_pn_list"][i]["join_cor"]      +cr_compare_compare["cr_plat_news_pn_list"][i]["join_cor"]      
 
-                    if plat_bill_join_cor > plat_bill_join_cor_other:
-                        major = major+1
-                    else:
-                        compare = compare+1
+                        compare_bill_cor =      cr_compare_major["cr_plat_bill_cor_list"][j]["accuracy"]     +cr_compare_compare["cr_plat_bill_cor_list"][j]["accuracy"]     
+                        compare_news_cor =      cr_compare_major["cr_plat_news_cor_list"][j]["accuracy"]     +cr_compare_compare["cr_plat_news_cor_list"][j]["accuracy"]     
+                        compare_bill_join_cor = cr_compare_major["cr_plat_bill_join_cor_list"][j]["join_cor"]+cr_compare_compare["cr_plat_bill_join_cor_list"][j]["join_cor"]
+                        compare_news_pn_cor =   cr_compare_major["cr_plat_news_pn_list"][j]["join_cor"]      +cr_compare_compare["cr_plat_news_pn_list"][j]["join_cor"]      
 
-                    if plat_news_pn_cor > plat_news_pn_cor_other:
-                        major = major+1
-                    else:
-                        compare = compare+1
-                    '''
+                    major = major_bill_cor + major_news_cor + major_bill_join_cor + major_news_pn_cor
+                    compare = compare_bill_cor + compare_news_cor + compare_bill_join_cor + compare_news_pn_cor
+
+
                     if major > compare:
                         dic[str(plat["_id"])] = dic[str(plat["_id"])] +1
                     else:

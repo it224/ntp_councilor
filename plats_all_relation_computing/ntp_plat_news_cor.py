@@ -63,14 +63,14 @@ def getNews(news):
 
 def compute(plat_list, news_list): 
     cr_dict = {}
-    cr_dict["_id"] = str(plat_list[0]["cr_id"])
-    cr_dict["name"] = plat_list[0]["cr_name"]
+    cr_dict["_id"] = news_list[0]["cr_id"]
+    # cr_dict["name"] = news_list[0]["cr_name"]
     plat_news_list_use = []
 
     for plat in plat_list:        
         save_dict ={}
-        save_dict["_id"]= str(plat["_id"])
-        save_dict["cr_id"]= str(plat["cr_id"])
+        save_dict["plat_id"]= plat["_id"]
+        save_dict["cr_id"]= plat["cr_id"]
         save_dict["name"]= plat["cr_name"]
         news_arr = []
         all_news_dict = {}
@@ -91,23 +91,23 @@ def compute(plat_list, news_list):
             cor_value = 0
             if(len(interArr)!=0):
                 cor_value = len(interArr)/len(plat_terms)
-            news_dict["news_id"] = str(news["_id"])
-            news_dict["news_cr_id"] = str(cr_dict["_id"])
+            news_dict["news_id"] = news["_id"]
             news_dict["interWord"] = interArr
             news_dict["cor_value"] = cor_value
             news_arr.append(news_dict)
-            all_news_dict[str(news["_id"])] = news_dict
+            # all_news_dict[str(news["_id"])] = news_dict
             all_count = all_count+cor_value
         if len(news_arr) != 0:
             ac = all_count/len(news_arr)
         else:
             ac = 0
         save_dict["accuracy"] = ac
-        save_dict["news_list"] = news_arr
-        save_dict["all_news_dict"] = all_news_dict
+        # save_dict["news_list"] = news_arr
+        # save_dict["all_news_dict"] = all_news_dict
         plat_news_list_use.append(save_dict)
-    cr_dict["plat_news_list_use"] = plat_news_list_use
-    return cr_dict
+    # cr_dict["plat_news_list_use"] = plat_news_list_use
+    # return cr_dict
+    return plat_news_list_use
 
 if __name__ == "__main__":
     plat_list = list(collection_cr_plat.find())

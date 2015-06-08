@@ -82,23 +82,25 @@ def getBill_withID(bill_id):
     else:
         return all_bill_parse_dict[str(bill_id)]
 
-def compute(plat_bill_list, bill_list):
-    #plat_bill_list全部是同一個cr的
-    cr_dict = {}
-    cr_dict["_id"] = plat_bill_list[0]["cr_id"]
-    cr_dict["name"] = plat_bill_list[0]["name"]
+def compute(cr_id, cr_name, plat_bill_list_cor, bill_list): #所有政見, plat_bill_list_cor 中的 all_bill_dict 中有 cr 對該政見的相關分數, bill_list 為 cr 參與的所有議案
+    '''
+        所有政見，計算每個議員對其政見的貢獻（不是只有提出政見的議員）
+    '''
+    # cr_dict = {}
+    # cr_dict["_id"] = cr_id
+    # cr_dict["name"] = cr_name
     plat_bill_list_use = []
 
-    for plat_bill in plat_bill_list:
-        all_bill_dict = plat_bill["all_bill_dict"]
+    for index, plat in enumerate(plat_bill_list_cor):
+        cr_all_bill_dict = plat["all_bill_dict"]
         save_dict ={}
-        save_dict["_id"]=plat["_id"]
-        save_dict["cr_id"]=plat["cr_id"]
+        save_dict["plat_id"]= plat["_id"]
+        save_dict["cr_id"]= plat["cr_id"]
         save_dict["name"]=plat["name"]
         all_count = 0
         bill_arr = []
 
-        for bill in bills_list:
+        for bill in bill_list:
             bill_dict = {}
             bill_use = getBill_withID(bill["_id"])
             bill_term_ckip_all = bill_use["bill_term_ckip_all"]
@@ -109,23 +111,24 @@ def compute(plat_bill_list, bill_list):
 
             #算比例
             so = math.log(pso_positive/nso_negative)
-            so = so *all_bill_dict[bill["_id"]]["cor_value"]
+            so = so *cr_all_bill_dict[str(bill["_id"])]["cor_value"]
 
             bill_dict["bill_id"] = bill["_id"]
             bill_dict["np_cor_value"] = so
             bill_arr.append(bill_dict)
 
             all_count = all_count+so
-            print all_count
         if all_count != 0:
-            join_count = all_count/len(bills_list)
+            join_count = all_count/len(bill_list)
         else:
             join_count = 0
         save_dict["join_count"] = join_count
-        save_dict["bill_list"]  = bill_arr
+        # save_dict["bill_list"]  = bill_arr
         plat_bill_list_use.append(save_dict)
-    cr_dict["plat_bill_list_use"] = plat_bill_list_use
-    return cr_dict
+    # cr_dict["plat_bill_list_use"] = plat_bill_list_use
+    # return cr_dict
+    return plat_bill_list_use
+        
 
 if __name__ == "__main__":
     

@@ -67,15 +67,17 @@ def getBill(bill):
         return all_bill_parse_dict[str(bill["_id"])]
         
 def compute(plat_list, bill_list):
-    cr_dict = {}
-    cr_dict["_id"] = plat_list[0]["cr_id"]
-    cr_dict["name"] = plat_list[0]["cr_name"]
+    # cr_dict = {}
+    # cr_dict["_id"] = bill_list[0]["cr_id"]
+    # cr_dict["name"] = bill_list[0]["cr_name"]
     plat_bill_list_use = []
 
     for plat in plat_list:
         save_dict ={}
-        save_dict["_id"]= plat["_id"]
-        all_bill_dict = {}
+        save_dict["plat_id"]= plat["_id"]
+        save_dict["cr_id"]= plat["cr_id"]
+        save_dict["name"]= plat["cr_name"]
+        # all_bill_dict = {}
         bill_arr = []
         all_count = 0
 
@@ -95,10 +97,9 @@ def compute(plat_list, bill_list):
             if(len(interArr)!=0):
                 cor_value = len(interArr)/len(plat_terms)
             bill_dict["bill_id"] = bill["_id"]
-            bill_dict["bill_cr_id"] = cr_dict["_id"]
             bill_dict["interWord"] = interArr
             bill_dict["cor_value"] = cor_value
-            all_bill_dict[str(bill["_id"])] = bill_dict
+            # all_bill_dict[str(bill["_id"])] = bill_dict
             bill_arr.append(bill_dict)
             all_count = all_count+cor_value
         if len(bill_arr) != 0:
@@ -106,11 +107,12 @@ def compute(plat_list, bill_list):
         else:
             ac = 0
         save_dict["accuracy"] = ac
-        save_dict["bill_list"]  = bill_arr
-        save_dict["all_bill_dict"] = all_bill_dict
+        # save_dict["bill_list"]  = bill_arr
+        # save_dict["all_bill_dict"] = all_bill_dict
         plat_bill_list_use.append(save_dict)
-    cr_dict["all_plat_bill_cor"] = plat_bill_list_use
-    return cr_dict
+    # cr_dict["all_plat_bill_cor"] = plat_bill_list_use
+    # return cr_dict
+    return plat_bill_list_use
 
 if __name__ == "__main__":
     plat_list = list(collection_cr_plat.find())
