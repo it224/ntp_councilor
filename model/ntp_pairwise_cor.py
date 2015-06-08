@@ -54,26 +54,26 @@ if __name__ == "__main__":
                         
                         major_bill_cor =        cr_compare["cr_plat_bill_cor_list"][i]["accuracy"]
                         major_news_cor =        cr_compare["cr_plat_news_cor_list"][i]["accuracy"]
-                        major_bill_join_cor =   cr_compare["cr_plat_bill_join_cor_list"][i]["join_cor"]
-                        major_news_pn_cor =     cr_compare["cr_plat_news_pn_list"][i]["join_cor"]
+                        major_bill_join_cor =   cr_compare["cr_plat_bill_join_cor_list"][i]["join_count"]
+                        major_news_pn_cor =     cr_compare["cr_plat_news_pn_cor_list"][i]["join_count"]
 
                         compare_bill_cor =      cr_compare["cr_plat_bill_cor_list"][j]["accuracy"]
                         compare_news_cor =      cr_compare["cr_plat_news_cor_list"][j]["accuracy"]
-                        compare_bill_join_cor = cr_compare["cr_plat_bill_join_cor_list"][j]["join_cor"]
-                        compare_news_pn_cor =   cr_compare["cr_plat_news_pn_list"][j]["join_cor"]                        
+                        compare_bill_join_cor = cr_compare["cr_plat_bill_join_cor_list"][j]["join_count"]
+                        compare_news_pn_cor =   cr_compare["cr_plat_news_pn_cor_list"][j]["join_count"]                        
                     else:
                         cr_compare_major = collection_cr_for_all_plats.find_one({"cr_id":plat["cr_id"]})
                         cr_compare_compare = collection_cr_for_all_plats.find_one({"cr_id":plat_other["cr_id"]})
                         
                         major_bill_cor =        cr_compare_major["cr_plat_bill_cor_list"][i]["accuracy"]     +cr_compare_compare["cr_plat_bill_cor_list"][i]["accuracy"]     
                         major_news_cor =        cr_compare_major["cr_plat_news_cor_list"][i]["accuracy"]     +cr_compare_compare["cr_plat_news_cor_list"][i]["accuracy"]     
-                        major_bill_join_cor =   cr_compare_major["cr_plat_bill_join_cor_list"][i]["join_cor"]+cr_compare_compare["cr_plat_bill_join_cor_list"][i]["join_cor"]
-                        major_news_pn_cor =     cr_compare_major["cr_plat_news_pn_list"][i]["join_cor"]      +cr_compare_compare["cr_plat_news_pn_list"][i]["join_cor"]      
+                        major_bill_join_cor =   cr_compare_major["cr_plat_bill_join_cor_list"][i]["join_count"]+cr_compare_compare["cr_plat_bill_join_cor_list"][i]["join_count"]
+                        major_news_pn_cor =     cr_compare_major["cr_plat_news_pn_cor_list"][i]["join_count"]      +cr_compare_compare["cr_plat_news_pn_cor_list"][i]["join_count"]      
 
                         compare_bill_cor =      cr_compare_major["cr_plat_bill_cor_list"][j]["accuracy"]     +cr_compare_compare["cr_plat_bill_cor_list"][j]["accuracy"]     
                         compare_news_cor =      cr_compare_major["cr_plat_news_cor_list"][j]["accuracy"]     +cr_compare_compare["cr_plat_news_cor_list"][j]["accuracy"]     
-                        compare_bill_join_cor = cr_compare_major["cr_plat_bill_join_cor_list"][j]["join_cor"]+cr_compare_compare["cr_plat_bill_join_cor_list"][j]["join_cor"]
-                        compare_news_pn_cor =   cr_compare_major["cr_plat_news_pn_list"][j]["join_cor"]      +cr_compare_compare["cr_plat_news_pn_list"][j]["join_cor"]      
+                        compare_bill_join_cor = cr_compare_major["cr_plat_bill_join_cor_list"][j]["join_count"]+cr_compare_compare["cr_plat_bill_join_cor_list"][j]["join_count"]
+                        compare_news_pn_cor =   cr_compare_major["cr_plat_news_pn_cor_list"][j]["join_count"]      +cr_compare_compare["cr_plat_news_pn_cor_list"][j]["join_count"]      
 
                     major = major_bill_cor + major_news_cor + major_bill_join_cor + major_news_pn_cor
                     compare = compare_bill_cor + compare_news_cor + compare_bill_join_cor + compare_news_pn_cor
