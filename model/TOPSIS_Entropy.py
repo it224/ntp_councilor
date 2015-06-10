@@ -153,7 +153,7 @@ def computeDistanceAnd(attributes, bestSolution, worestSolution):
 
 #make attribute matrix  m=638, n=4
 #638個排名
-all_plats        = list(ntp_crs.find({}, {"_id":1, "cr_id":1, "plat_origin":1, "cr_name":1 }))
+# all_plats        = list(ntp_crs.find({}, {"_id":1, "cr_id":1, "plat_origin":1, "cr_name":1 }))
 #4個屬性
 plat_bill_cor    = list(ntp_platform_bill_cor.find({}, {"_id":1, "cr_id":1, "name":1, "accuracy":1}))
 plat_news_cor    = list(ntp_platform_news_cor.find({}, {"_id":1, "cr_id":1, "name":1, "accuracy":1}))
