@@ -13,7 +13,7 @@ import math
 cr 對所有plat的影響 其topsis的分數
 '''
 
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://localhost:27018/')
 db                            = client['ntp_councilor']
 collection_crs                = db["ntp_crs"]                 #所有政見638筆  ntp_crs
 collection_plats              = db["ntp_platform"]
