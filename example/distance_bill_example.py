@@ -12,7 +12,8 @@ db = client['ntp_councilor']
 collection_plat = db['ntp_platform_example']
 collection_bill = db['ntp_bills_example']
 collection_same_word = db['same_word_my_country']
-collection_save = db['ntp_platform_bill_cor_example_v4']
+collection_correlation = db['ntp_term_correlation']
+collection_save = db['ntp_platform_bill_cor_example_v5']
 
 # math.exp(-distance)
 
@@ -69,6 +70,7 @@ def removeStopWord(array):
             array_return.append(item)
     return array_return
 
+#v1
 def pnso_value(term_dict, term_times_dict, interArr, pnso_term):
     distance_all = 0
     if len(interArr)>0:
@@ -84,6 +86,7 @@ def pnso_value(term_dict, term_times_dict, interArr, pnso_term):
                     distance_all = distance_all+distance
     return distance_all
 
+#v2
 def wpnso_value(len_number, term_dict, term_times_dict, interArr, pnso_term):
     distance_all = 0
     if len(interArr)>0:
@@ -108,6 +111,7 @@ def wpnso_value(len_number, term_dict, term_times_dict, interArr, pnso_term):
                     distance_all = distance_all+distance
     return distance_all
 
+#v3
 def tfidfpnso_value(tfidfDict, term_dict, term_times_dict, interArr, pnso_term):
     distance_all = 0
     if len(interArr)>0:
@@ -129,6 +133,7 @@ def tfidfpnso_value(tfidfDict, term_dict, term_times_dict, interArr, pnso_term):
                     distance_all = distance_all+distance
     return distance_all
 
+#v4
 def wtfidfpnso_value(len_number, tfidfDict, term_dict, term_times_dict, interArr, pnso_term):
     distance_all = 0
     if len(interArr)>0:
@@ -156,6 +161,31 @@ def wtfidfpnso_value(len_number, tfidfDict, term_dict, term_times_dict, interArr
                     if pnsoIndex in term_times_dict.keys():
                         distance = distance/term_times_dict[pnsoIndex] #字與相關字的次數
                     distance_all = distance_all+distance
+    return distance_all
+
+#v5
+def corpnso_value(term_dict, term_times_dict, termArr, pnso_term):
+    distance_all = 0    
+    if len(pnso_term)>0:
+        for term in termArr:
+            if term in term_dict.keys():
+                interIndex = term_dict[term]
+                main_term = list(collection_correlation.find({"main_word":term}))
+                if len(main_term)>0:
+                    main_term = main_term[0]
+                    term_valueDict = main_term["term_value"]
+                    for pnso in pnso_term:
+                        if pnso in term_valueDict.keys():
+                            pnsoIndex = term_dict[pnso]
+                            distance = (math.fabs(interIndex - pnsoIndex))*-1
+                            distance = math.exp(distance)
+                            #correlation value
+                            print "term : "+term
+                            print "pnso : "+pnso
+                            print "term_valueDict[pnso] : "+ str(term_valueDict[pnso])
+                            distance = distance* term_valueDict[pnso]
+                            print "distance : "+ str(distance)
+                            distance_all = distance_all+distance
     return distance_all
 
 plat_list = list(collection_plat.find())
@@ -221,13 +251,17 @@ for plat in plat_list:
         # nso_value = tfidfpnso_value(tfidf_dict, bill_term_dict, bill_times_dict, interArr, nso_term)
 
         # v4 U shaped+tfidf weight
-        len_number = round(len(bill_term)/5)
-        if len_number>1:
-            pso_value = wtfidfpnso_value(len_number, tfidf_dict, bill_term_dict, bill_times_dict, interArr, pso_term)
-            nso_value = wtfidfpnso_value(len_number, tfidf_dict, bill_term_dict, bill_times_dict, interArr, nso_term)
-        else:
-            pso_value = tfidfpnso_value(tfidf_dict, bill_term_dict, bill_times_dict, interArr, pso_term)
-            nso_value = tfidfpnso_value(tfidf_dict, bill_term_dict, bill_times_dict, interArr, nso_term)
+        # len_number = round(len(bill_term)/5)
+        # if len_number>1:
+        #     pso_value = wtfidfpnso_value(len_number, tfidf_dict, bill_term_dict, bill_times_dict, interArr, pso_term)
+        #     nso_value = wtfidfpnso_value(len_number, tfidf_dict, bill_term_dict, bill_times_dict, interArr, nso_term)
+        # else:
+        #     pso_value = tfidfpnso_value(tfidf_dict, bill_term_dict, bill_times_dict, interArr, pso_term)
+        #     nso_value = tfidfpnso_value(tfidf_dict, bill_term_dict, bill_times_dict, interArr, nso_term)
+
+        # v5 correlation
+        pso_value = corpnso_value(bill_term_dict, bill_times_dict, plat_terms, pso_term)
+        nso_value = corpnso_value(bill_term_dict, bill_times_dict, plat_terms, nso_term)        
 
         so = math.log((pso_value+1)/(nso_value+1)) #+1避免為0
         so_plus = pso_value- nso_value
@@ -308,6 +342,6 @@ for plat in plat_list:
         f.write("\n")
         f.close()
         '''
-        
+        # break
 print "end all"
 exit(0)
